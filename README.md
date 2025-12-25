@@ -10,10 +10,11 @@
 
 | No | Nama | NPM |
 | :--- | :--- | :--- | 
-| 1. | **Dhito Aryo Trengginas** | **2315061015** |
-| 2. | Saif Abdullah | 2315061109 |
-| 3. | M. Aidil Fikri | 2315061130 | 
-| 4. | Luthfi Muthathohirin | 2315061112 | 
+| 1. | **Muhammad Farhan** | **23150610..** |
+| 2. | Dhito Aryo Trengginas | 2315061015 |
+| 3. | Nuzaim Birri | 23150610.. | 
+| 4. | Ramadhani Ahmad | 2365061001 | 
+| 5. | Sultan Bani Hakim | 23150610.. | 
 
 ---
 
@@ -427,8 +428,7 @@ Project ini dibuat untuk keperluan akademik **Praktikum Pemrograman Web** - Univ
 
 ## 🙏 Acknowledgments
 
-- **Dosen Pengampu:** [Nama Dosen]
-- **Asisten Praktikum:** [Nama Asisten]
+- **Dosen Pengampu:** [Resty Annisa, S.ST., M.Kom]
 - **References:** 
   - Bootstrap Icons (https://icons.getbootstrap.com)
   - Chart.js (https://www.chartjs.org)
@@ -437,5 +437,5 @@ Project ini dibuat untuk keperluan akademik **Praktikum Pemrograman Web** - Univ
 
 ---
 
-**© 2025 PeerLearn - Kelompok 21**  
-*Dibuat dengan ❤️ untuk Praktikum Pemrograman Web*
+**© 2025 PeerLearn**  
+*Dibuat dengan ❤️ untuk Manajemen Proyek Teknologi Informasi*
