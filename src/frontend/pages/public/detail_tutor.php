@@ -62,8 +62,8 @@ if (!$tutorData) {
     exit;
 }
 
-// Get subjects taught by tutor
-$subjectsQuery = "SELECT subject_name, price FROM subjects WHERE tutor_id = ?";
+// Get subjects taught by tutor from tutor_mapel
+$subjectsQuery = "SELECT DISTINCT nama_mapel, jenjang FROM tutor_mapel WHERE tutor_id = ? ORDER BY nama_mapel ASC";
 $stmt = mysqli_prepare($conn, $subjectsQuery);
 mysqli_stmt_bind_param($stmt, "i", $tutor_id);
 mysqli_stmt_execute($stmt);
@@ -560,10 +560,10 @@ $userRole = $_SESSION['user_role'] ?? '';
                 <?php 
                 if (!empty($subjects)) {
                     foreach ($subjects as $subject) {
-                        echo '<span class="subject-badge">' . htmlspecialchars($subject['subject_name']) . '</span>';
+                        echo '<span class="subject-badge">' . htmlspecialchars($subject['nama_mapel']) . ' <small>(' . htmlspecialchars($subject['jenjang']) . ')</small></span>';
                     }
                 } else {
-                    $defaultSubjects = ['Fisika SMA', 'Matematika SMA', 'Mekanika', 'Termodinamika', 'Elektromagnetisme', 'Kalkulus', 'Aljabar', 'Trigonometri'];
+                    $defaultSubjects = ['Fisika', 'Matematika', 'Kimia', 'Biologi', 'Bahasa Inggris'];
                     foreach ($defaultSubjects as $subj) {
                         echo '<span class="subject-badge">' . $subj . '</span>';
                     }

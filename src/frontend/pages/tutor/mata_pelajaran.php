@@ -434,7 +434,7 @@ function deleteSubject(id, name) {
         <form action="../../../backend/tutor/add_subject.php" method="POST">
             <div class="form-group">
                 <label class="form-label">Nama Mata Pelajaran</label>
-                <input type="text" name="subject_name" class="form-control" placeholder="Contoh: Matematika SMA" required>
+                <input type="text" name="subject_name" class="form-control" placeholder="Contoh: Matematika" required>
             </div>
 
             <div class="form-group">

@@ -7,7 +7,7 @@ ini_set('display_errors', 1);
 require_once '../../../config/database.php';
 
 $assetPath = "../../assets/";
-$logoPath = "/kelompok/kelompok_21/src/assets/img/logo.png";
+$logoPath = "/src/assets/img/logo.png";
 
 $isLoggedIn = isset($_SESSION['is_logged_in']) && $_SESSION['is_logged_in'];
 $userRole = isset($_SESSION['user_role']) ? $_SESSION['user_role'] : '';
@@ -345,7 +345,7 @@ function renderPage() {
         <!-- Tags -->
         <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
           <span style="background: #DBEAFE; color: #1D4ED8; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;">
-            Fisika SMA
+            Fisika
           </span>
           <span style="background: #DBEAFE; color: #1D4ED8; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;">
             ${t.mapel}

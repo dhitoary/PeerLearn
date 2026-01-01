@@ -42,11 +42,11 @@ if ($result && mysqli_num_rows($result) > 0) {
 }
 
 // Query untuk mengambil jumlah tutor per mata pelajaran
-$categoryQuery = "SELECT s.subject_name, COUNT(DISTINCT s.tutor_id) as tutor_count 
-                  FROM subjects s 
-                  INNER JOIN tutor t ON s.tutor_id = t.id 
+$categoryQuery = "SELECT tm.nama_mapel, COUNT(DISTINCT tm.tutor_id) as tutor_count 
+                  FROM tutor_mapel tm
+                  INNER JOIN tutor t ON tm.tutor_id = t.id 
                   WHERE t.status = 'Aktif' 
-                  GROUP BY s.subject_name 
+                  GROUP BY tm.nama_mapel 
                   ORDER BY tutor_count DESC";
 $categoryResult = mysqli_query($conn, $categoryQuery);
 
@@ -54,7 +54,7 @@ $categoriesData = [];
 if ($categoryResult && mysqli_num_rows($categoryResult) > 0) {
     while ($row = mysqli_fetch_assoc($categoryResult)) {
         $categoriesData[] = [
-            'name' => $row['subject_name'],
+            'name' => $row['nama_mapel'],
             'count' => $row['tutor_count']
         ];
     }
@@ -273,7 +273,7 @@ if (empty($tutorsData)) {
           <div style="font-weight: 700; color: #1a5f7a; font-size: 18px; margin-bottom: 5px;">Alya Natasya</div>
           <div style="color: #999; font-size: 14px;">Siswa SMA Kelas 12</div>
           <div style="color: #FF6B35; font-size: 13px; margin-top: 8px; font-weight: 600;">
-            <i class="bi bi-book"></i> Matematika SMA
+            <i class="bi bi-book"></i> Matematika
           </div>
         </div>
       </div>
@@ -366,7 +366,7 @@ if (empty($tutorsData)) {
           <div style="font-weight: 700; color: #1a5f7a; font-size: 18px; margin-bottom: 5px;">Farhan Aditya</div>
           <div style="color: #999; font-size: 14px;">Siswa SMA Kelas 11</div>
           <div style="color: #FF6B35; font-size: 13px; margin-top: 8px; font-weight: 600;">
-            <i class="bi bi-book"></i> Fisika SMA
+            <i class="bi bi-book"></i> Fisika
           </div>
         </div>
       </div>
@@ -428,7 +428,7 @@ if (empty($tutorsData)) {
           <div style="font-weight: 700; color: #1a5f7a; font-size: 18px; margin-bottom: 5px;">Budi Anwar</div>
           <div style="color: #999; font-size: 14px;">Siswa SMA Kelas 12</div>
           <div style="color: #FF6B35; font-size: 13px; margin-top: 8px; font-weight: 600;">
-            <i class="bi bi-book"></i> Kimia SMA
+            <i class="bi bi-book"></i> Kimia
           </div>
         </div>
       </div>
