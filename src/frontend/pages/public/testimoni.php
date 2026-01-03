@@ -123,25 +123,6 @@ $categories = ['Semua', 'SD', 'SMP', 'SMA', 'UTBK'];
         background: #f8f9fa;
     }
 
-    .page-header {
-        background: linear-gradient(135deg, #cc5500 0%, #1a5f7a 100%);
-        color: white;
-        padding: 60px 0 40px;
-        text-align: center;
-        margin-bottom: 50px;
-    }
-
-    .page-title {
-        font-size: 48px;
-        font-weight: 800;
-        margin-bottom: 15px;
-    }
-
-    .page-subtitle {
-        font-size: 18px;
-        opacity: 0.9;
-    }
-
     .stats-bar {
         background: white;
         padding: 30px;
@@ -300,10 +281,6 @@ $categories = ['Semua', 'SD', 'SMP', 'SMA', 'UTBK'];
     }
 
     @media (max-width: 768px) {
-        .page-title {
-            font-size: 32px;
-        }
-
         .testimoni-grid {
             grid-template-columns: 1fr;
         }
@@ -315,15 +292,7 @@ $categories = ['Semua', 'SD', 'SMP', 'SMA', 'UTBK'];
     }
 </style>
 
-<!-- Page Header -->
-<div class="page-header">
-    <div class="container">
-        <h1 class="page-title">Testimoni Siswa Kami</h1>
-        <p class="page-subtitle">Kisah sukses dan pengalaman nyata dari siswa yang telah belajar bersama tutor terbaik</p>
-    </div>
-</div>
-
-<div class="container">
+<div class="container" style="margin-top: 40px;">
     <!-- Stats Bar -->
     <div class="stats-bar">
         <div class="stat-item">
