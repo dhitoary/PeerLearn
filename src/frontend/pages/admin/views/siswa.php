@@ -16,6 +16,10 @@ $result = mysqli_query($conn, $query);
         <p class="text-muted mb-0">Kelola data siswa yang terdaftar</p>
     </div>
     <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="button" class="btn btn-sm rounded-pill shadow-sm me-2" onclick="openAddSiswaModal()" 
+                style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none;">
+            <i class="fas fa-plus me-1"></i>Tambah Siswa
+        </button>
         <button type="button" class="btn btn-sm rounded-pill shadow-sm" onclick="window.print()" 
                 style="background: linear-gradient(135deg, #cc5500 0%, #0A5A70 100%); color: white; border: none;">
             <i class="fas fa-download me-1"></i>Export Data
@@ -96,7 +100,13 @@ $result = mysqli_query($conn, $query);
                             <i class="fas fa-eye"></i>
                         </button>
                         
-                        <button class="btn btn-sm btn-light text-danger" onclick="confirmAction('Hapus siswa ini?')">
+                        <button class="btn btn-sm btn-light text-primary" 
+                                onclick="editSiswa(<?= $row['id'] ?>)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        
+                        <button class="btn btn-sm btn-light text-danger" 
+                                onclick="deleteSiswa(<?= $row['id'] ?>)">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -111,6 +121,70 @@ $result = mysqli_query($conn, $query);
 
             </tbody>
         </table>
+    </div>
+</div>
+
+<!-- Modal Tambah/Edit Siswa -->
+<div class="modal fade" id="modalFormSiswa" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #cc5500 0%, #0A5A70 100%); color: white;">
+                <h5 class="modal-title" id="modalFormTitle"><i class="fas fa-user-plus me-2"></i>Tambah Siswa Baru</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formSiswa">
+                <div class="modal-body">
+                    <input type="hidden" id="siswa_id" name="id">
+                    <input type="hidden" id="form_action" name="action" value="create">
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Lengkap <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="siswa_nama" name="nama_lengkap" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="siswa_email" name="email" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Jenjang <span class="text-danger">*</span></label>
+                            <select class="form-select" id="siswa_jenjang" name="jenjang" required>
+                                <option value="">Pilih Jenjang</option>
+                                <option value="SD">SD</option>
+                                <option value="SMP">SMP</option>
+                                <option value="SMA">SMA</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Kelas <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="siswa_kelas" name="kelas" placeholder="Contoh: 10 IPA" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Status</label>
+                            <select class="form-select" id="siswa_status" name="status">
+                                <option value="Aktif">Aktif</option>
+                                <option value="Cuti">Cuti</option>
+                                <option value="Non-Aktif">Non-Aktif</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Sekolah <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="siswa_sekolah" name="sekolah" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Minat Belajar</label>
+                            <textarea class="form-control" id="siswa_minat" name="minat" rows="3" placeholder="Mata pelajaran yang diminati..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                        <i class="fas fa-save me-1"></i>Simpan Data
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -141,6 +215,107 @@ $result = mysqli_query($conn, $query);
 </div>
 
 <script>
+    // Fungsi membuka modal tambah siswa
+    function openAddSiswaModal() {
+        document.getElementById('modalFormTitle').innerHTML = '<i class="fas fa-user-plus me-2"></i>Tambah Siswa Baru';
+        document.getElementById('formSiswa').reset();
+        document.getElementById('siswa_id').value = '';
+        document.getElementById('form_action').value = 'create';
+        new bootstrap.Modal(document.getElementById('modalFormSiswa')).show();
+    }
+
+    // Fungsi edit siswa
+    function editSiswa(id) {
+        fetch(`../../../backend/admin/crud_siswa.php?action=read&id=${id}`)
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    const data = result.data;
+                    document.getElementById('modalFormTitle').innerHTML = '<i class="fas fa-edit me-2"></i>Edit Data Siswa';
+                    document.getElementById('siswa_id').value = data.id;
+                    document.getElementById('siswa_nama').value = data.nama_lengkap;
+                    document.getElementById('siswa_email').value = data.email;
+                    document.getElementById('siswa_jenjang').value = data.jenjang;
+                    document.getElementById('siswa_kelas').value = data.kelas;
+                    document.getElementById('siswa_sekolah').value = data.sekolah;
+                    document.getElementById('siswa_minat').value = data.minat;
+                    document.getElementById('siswa_status').value = data.status;
+                    document.getElementById('form_action').value = 'update';
+                    new bootstrap.Modal(document.getElementById('modalFormSiswa')).show();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Terjadi kesalahan saat mengambil data', 'error');
+            });
+    }
+
+    // Fungsi hapus siswa
+    function deleteSiswa(id) {
+        Swal.fire({
+            title: 'Hapus Siswa?',
+            text: "Data siswa akan dihapus permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const formData = new FormData();
+                formData.append('action', 'delete');
+                formData.append('id', id);
+
+                fetch('../../../backend/admin/crud_siswa.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Terjadi kesalahan saat menghapus data', 'error');
+                });
+            }
+        });
+    }
+
+    // Submit form siswa
+    document.getElementById('formSiswa').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('../../../backend/admin/crud_siswa.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                showToast(result.message, 'success');
+                bootstrap.Modal.getInstance(document.getElementById('modalFormSiswa')).hide();
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast(result.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Terjadi kesalahan saat menyimpan data', 'error');
+        });
+    });
+
     function showDetailSiswa(nama, jenjang, sekolah, kelas, minat) {
         document.getElementById('d_nama').innerText = nama;
         document.getElementById('d_jenjang').innerText = jenjang;

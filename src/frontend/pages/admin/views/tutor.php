@@ -11,10 +11,16 @@ $result = mysqli_query($conn, $query);
         <h2 class="mb-1 fw-bold" style="color: #cc5500;"><i class="fas fa-chalkboard-teacher me-2"></i>Data Tutor (Pengajar)</h2>
         <p class="text-muted mb-0">Kelola data tutor yang terdaftar</p>
     </div>
-    <button class="btn btn-sm rounded-pill shadow-sm" onclick="window.print()" 
-            style="background: linear-gradient(135deg, #ff9329 0%, #ffd4c1 100%); color: #cc5500; border: none; font-weight: 600;">
-        <i class="fas fa-download me-1"></i>Export Data
-    </button>
+    <div>
+        <button class="btn btn-sm rounded-pill shadow-sm me-2" onclick="openAddTutorModal()" 
+                style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; font-weight: 600;">
+            <i class="fas fa-plus me-1"></i>Tambah Tutor
+        </button>
+        <button class="btn btn-sm rounded-pill shadow-sm" onclick="window.print()" 
+                style="background: linear-gradient(135deg, #ff9329 0%, #ffd4c1 100%); color: #cc5500; border: none; font-weight: 600;">
+            <i class="fas fa-download me-1"></i>Export Data
+        </button>
+    </div>
 </div>
 
 <div class="card border-0 shadow-sm mb-4">
@@ -104,8 +110,8 @@ $result = mysqli_query($conn, $query);
                                 )">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-sm btn-light text-primary" onclick="editTutor('<?= addslashes($row['nama_lengkap']) ?>', '<?= $row['keahlian'] ?>', '<?= $row['status'] ?>')"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-light text-danger" onclick="confirmAction('Hapus tutor ini?')"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-sm btn-light text-primary" onclick="editTutor(<?= $row['id'] ?>)"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-light text-danger" onclick="deleteTutor(<?= $row['id'] ?>)"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
 
@@ -123,42 +129,59 @@ $result = mysqli_query($conn, $query);
 </div>
 
 <div class="modal fade" id="modalTutor" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Tambah Tutor Baru</h5>
+            <div class="modal-header" style="background: linear-gradient(135deg, #ff9329 0%, #ffd4c1 100%); color: #cc5500;">
+                <h5 class="modal-title fw-bold" id="modalTitle"><i class="fas fa-user-plus me-2"></i>Tambah Tutor Baru</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <form id="formTutor">
-                    <div class="mb-3">
-                        <label class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control" id="inputNama" required>
+            <form id="formTutor">
+                <div class="modal-body">
+                    <input type="hidden" id="tutor_id" name="id">
+                    <input type="hidden" id="tutor_action" name="action" value="create">
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Lengkap <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="tutor_nama" name="nama_lengkap" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="tutor_email" name="email" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Keahlian <span class="text-danger">*</span></label>
+                            <select class="form-select" id="tutor_keahlian" name="keahlian" required>
+                                <option value="">Pilih Keahlian</option>
+                                <option value="Matematika">Matematika</option>
+                                <option value="Bahasa Inggris">Bahasa Inggris</option>
+                                <option value="Koding">Koding</option>
+                                <option value="Fisika">Fisika</option>
+                                <option value="Biologi">Biologi</option>
+                                <option value="Kimia">Kimia</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Status</label>
+                            <select class="form-select" id="tutor_status" name="status">
+                                <option value="Aktif">Aktif</option>
+                                <option value="Non-Aktif">Non-Aktif</option>
+                                <option value="Cuti">Cuti</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Pendidikan / Kampus <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="tutor_pendidikan" name="pendidikan" placeholder="Contoh: Universitas Indonesia" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Keahlian</label>
-                        <select class="form-select" id="inputKategori">
-                            <option value="Matematika">Matematika</option>
-                            <option value="Bahasa Inggris">Bahasa Inggris</option>
-                            <option value="Koding">Koding</option>
-                            <option value="Fisika">Fisika</option>
-                            <option value="Biologi">Biologi</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" id="inputStatus">
-                            <option value="Aktif">Aktif</option>
-                            <option value="Non-Aktif">Non-Aktif</option>
-                            <option value="Cuti">Cuti</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" onclick="simpanTutor()">Simpan</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                        <i class="fas fa-save me-1"></i>Simpan Data
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -200,6 +223,104 @@ $result = mysqli_query($conn, $query);
 </div>
 
 <script>
+    // Fungsi membuka modal tambah tutor
+    function openAddTutorModal() {
+        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus me-2"></i>Tambah Tutor Baru';
+        document.getElementById('formTutor').reset();
+        document.getElementById('tutor_id').value = '';
+        document.getElementById('tutor_action').value = 'create';
+        new bootstrap.Modal(document.getElementById('modalTutor')).show();
+    }
+
+    // Fungsi edit tutor
+    function editTutor(id) {
+        fetch(`../../../backend/admin/crud_tutor.php?action=read&id=${id}`)
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    const data = result.data;
+                    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit me-2"></i>Edit Data Tutor';
+                    document.getElementById('tutor_id').value = data.id;
+                    document.getElementById('tutor_nama').value = data.nama_lengkap;
+                    document.getElementById('tutor_email').value = data.email;
+                    document.getElementById('tutor_keahlian').value = data.keahlian;
+                    document.getElementById('tutor_pendidikan').value = data.pendidikan;
+                    document.getElementById('tutor_status').value = data.status;
+                    document.getElementById('tutor_action').value = 'update';
+                    new bootstrap.Modal(document.getElementById('modalTutor')).show();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Terjadi kesalahan saat mengambil data', 'error');
+            });
+    }
+
+    // Fungsi hapus tutor
+    function deleteTutor(id) {
+        Swal.fire({
+            title: 'Hapus Tutor?',
+            text: "Data tutor akan dihapus permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const formData = new FormData();
+                formData.append('action', 'delete');
+                formData.append('id', id);
+
+                fetch('../../../backend/admin/crud_tutor.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Terjadi kesalahan saat menghapus data', 'error');
+                });
+            }
+        });
+    }
+
+    // Submit form tutor
+    document.getElementById('formTutor').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('../../../backend/admin/crud_tutor.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                showToast(result.message, 'success');
+                bootstrap.Modal.getInstance(document.getElementById('modalTutor')).hide();
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast(result.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Terjadi kesalahan saat menyimpan data', 'error');
+        });
+    });
 
     function showDetailTutor(nama, email, kategori, status, edukasi) {
         document.getElementById('detailNama').innerText = nama;
@@ -247,17 +368,4 @@ $result = mysqli_query($conn, $query);
         }
     }
 
-    function editTutor(nama, kategori, status) {
-        document.getElementById('modalTitle').innerText = "Edit Data Tutor";
-        document.getElementById('inputNama').value = nama;
-        document.getElementById('inputKategori').value = kategori;
-        document.getElementById('inputStatus').value = status;
-        new bootstrap.Modal(document.getElementById('modalTutor')).show();
-    }
-
-    function simpanTutor() {
-        var modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => bootstrap.Modal.getInstance(modal)?.hide());
-        showToast("Data berhasil disimpan!", "success");
-    }
 </script>
