@@ -7,7 +7,7 @@ $totalSiswa = mysqli_fetch_assoc($qSiswa)['total'];
 $qTutor = mysqli_query($conn, "SELECT COUNT(*) as total FROM tutor");
 $totalTutor = mysqli_fetch_assoc($qTutor)['total'];
 
-$qPending = mysqli_query($conn, "SELECT COUNT(*) as total FROM users WHERE role = 'tutor' AND status = 'pending'");
+$qPending = mysqli_query($conn, "SELECT COUNT(*) as total FROM tutor WHERE status = 'Pending'");
 $totalPending = mysqli_fetch_assoc($qPending)['total'];
 
 $qKelasAktif = mysqli_query($conn, "SELECT COUNT(*) as total FROM bookings WHERE status IN ('confirmed', 'pending')");
@@ -53,7 +53,7 @@ while($row = mysqli_fetch_assoc($qBookingStatus)) {
 }
 $jsonBookingStatus = json_encode($bookingStatus);
 
-$logQuery = "SELECT id, name, email, role, status, created_at 
+$logQuery = "SELECT id, nama_lengkap, email, role, created_at 
              FROM users 
              WHERE role IN ('learner', 'tutor')
              ORDER BY created_at DESC 
@@ -210,25 +210,22 @@ $logResult = mysqli_query($conn, $logQuery);
                             $timeAgo = $days . ' hari lalu';
                         }
                         
-                        $statusClass = 'secondary';
-                        $statusText = 'Baru';
-                        if ($log['role'] == 'tutor' && $log['status'] == 'pending') {
-                            $statusClass = 'warning';
-                            $statusText = 'Menunggu Verifikasi';
-                        } elseif ($log['status'] == 'active') {
-                            $statusClass = 'success';
-                            $statusText = 'Aktif';
-                        } elseif ($log['status'] == 'banned') {
-                            $statusClass = 'danger';
-                            $statusText = 'Ditolak';
+                        $statusClass = 'success';
+                        $statusText = 'Aktif';
+                        if ($log['role'] == 'tutor') {
+                            $statusClass = 'info';
+                            $statusText = 'Tutor';
+                        } elseif ($log['role'] == 'learner') {
+                            $statusClass = 'primary';
+                            $statusText = 'Siswa';
                         }
                     ?>
                     <tr>
                         <td>
                             <div class="d-flex align-items-center">
-                                <img src="https://ui-avatars.com/api/?name=<?= urlencode($log['name']) ?>&background=random" class="rounded-circle me-2" width="32" height="32">
+                                <img src="https://ui-avatars.com/api/?name=<?= urlencode($log['nama_lengkap']) ?>&background=random" class="rounded-circle me-2" width="32" height="32">
                                 <div>
-                                    <strong><?= htmlspecialchars($log['name']) ?></strong>
+                                    <strong><?= htmlspecialchars($log['nama_lengkap']) ?></strong>
                                     <br><small class="text-muted"><?= htmlspecialchars($log['email']) ?></small>
                                 </div>
                             </div>

@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($email) || empty($password)) {
         $error = "Email dan password harus diisi.";
     } else {
-        $query = "SELECT id, name, email, password, role, status FROM users WHERE email = ?";
+        $query = "SELECT id, nama_lengkap, email, password, role, status FROM users WHERE email = ?";
         $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param($stmt, "s", $email);
         mysqli_stmt_execute($stmt);
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
                     $_SESSION['is_logged_in'] = true;
                     $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['user_name'] = $user['name'];
+                    $_SESSION['user_name'] = $user['nama_lengkap'];
                     $_SESSION['user_email'] = $user['email'];
                     $_SESSION['user_role'] = $user['role'];
                     $_SESSION['user_status'] = $user['status'];

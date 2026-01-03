@@ -1,25 +1,25 @@
 <?php
 global $conn;
 
-$pendingQuery = "SELECT t.*, u.status as user_status, u.created_at as register_date, u.name as user_name
+$pendingQuery = "SELECT t.*, t.status as user_status, u.created_at as register_date, u.nama_lengkap as user_name
                  FROM users u
                  INNER JOIN tutor t ON u.email = t.email
                  WHERE u.role = 'tutor' 
-                 AND u.status = 'pending'
+                 AND t.status = 'Pending'
                  ORDER BY u.created_at DESC";
 $pendingResult = mysqli_query($conn, $pendingQuery);
 $totalPending = mysqli_num_rows($pendingResult);
 
-$historyQuery = "SELECT t.*, u.status as user_status, u.created_at as register_date, u.name as user_name,
+$historyQuery = "SELECT t.*, t.status as user_status, u.created_at as register_date, u.nama_lengkap as user_name,
                  CASE 
-                     WHEN u.status = 'active' AND t.status = 'Aktif' THEN 'approved'
-                     WHEN u.status = 'banned' THEN 'rejected'
+                     WHEN t.status = 'Aktif' THEN 'approved'
+                     WHEN t.status = 'Non-Aktif' THEN 'rejected'
                      ELSE 'unknown'
                  END as decision_status
                  FROM users u
                  INNER JOIN tutor t ON u.email = t.email
                  WHERE u.role = 'tutor'
-                 AND (u.status = 'active' OR u.status = 'banned')
+                 AND t.status IN ('Aktif', 'Non-Aktif')
                  ORDER BY u.created_at DESC
                  LIMIT 20";
 $historyResult = mysqli_query($conn, $historyQuery);
