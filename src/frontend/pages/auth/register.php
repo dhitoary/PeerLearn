@@ -31,9 +31,24 @@
                     <?php
                         if ($_GET['error'] == 'email_taken') echo "Email sudah terdaftar. Silakan gunakan email lain.";
                         else if ($_GET['error'] == 'invalid_email') echo "Format email tidak valid.";
-                        else if ($_GET['error'] == 'db_error') echo "Terjadi kesalahan sistem. Silakan coba lagi.";
+                        else if ($_GET['error'] == 'db_error') {
+                            echo "Terjadi kesalahan sistem. Silakan coba lagi.";
+                            if (isset($_GET['msg'])) {
+                                echo "<br><small style='font-size: 12px;'>Detail: " . htmlspecialchars($_GET['msg']) . "</small>";
+                            }
+                        }
                         else if ($_GET['error'] == 'empty_fields') echo "Harap isi semua data dengan lengkap.";
                         else echo "Terjadi kesalahan. Silakan coba lagi.";
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- Success Message -->
+            <?php if (isset($_GET['success'])): ?>
+                <div class="alert alert-success" style="background: #d4edda; color: #155724; border-color: #c3e6cb;">
+                    <?php
+                        if ($_GET['success'] == 'registered') echo "Pendaftaran berhasil! Silakan login.";
+                        else if ($_GET['success'] == 'registered_pending') echo "Pendaftaran berhasil! Akun Anda akan diverifikasi oleh admin.";
                     ?>
                 </div>
             <?php endif; ?>

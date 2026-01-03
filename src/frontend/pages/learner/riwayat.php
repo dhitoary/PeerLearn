@@ -80,7 +80,7 @@ $count_cancelled_result = mysqli_query($conn, "SELECT COUNT(*) as total FROM boo
 $count_cancelled = $count_cancelled_result ? mysqli_fetch_assoc($count_cancelled_result)['total'] : 0;
 
 
-$logoPath = "/kelompok/kelompok_21/src/assets/img/logo.png";
+$logoPath = "../../../assets/img/logo.png";
 ?>
 
 <!DOCTYPE html>

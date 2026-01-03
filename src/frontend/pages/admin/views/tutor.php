@@ -4,12 +4,15 @@ if (!$conn) { echo "<div class='alert alert-danger'>Koneksi database gagal!</div
 
 $query = "SELECT * FROM tutor ORDER BY id DESC";
 $result = mysqli_query($conn, $query);
+
+// Debug: Tampilkan jumlah data
+$total_tutor = mysqli_num_rows($result);
 ?>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-4">
     <div>
         <h2 class="mb-1 fw-bold" style="color: #cc5500;"><i class="fas fa-chalkboard-teacher me-2"></i>Data Tutor (Pengajar)</h2>
-        <p class="text-muted mb-0">Kelola data tutor yang terdaftar</p>
+        <p class="text-muted mb-0">Kelola data tutor yang terdaftar (Total: <?= $total_tutor ?>)</p>
     </div>
     <div>
         <button class="btn btn-sm rounded-pill shadow-sm me-2" onclick="openAddTutorModal()" 

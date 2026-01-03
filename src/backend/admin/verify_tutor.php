@@ -55,12 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($action === 'approve') {
-            // Update users table: status = active
-            $updateUserQuery = "UPDATE users SET status = 'active' WHERE email = ? AND role = 'tutor'";
-            $stmt = mysqli_prepare($conn, $updateUserQuery);
-            mysqli_stmt_bind_param($stmt, "s", $tutor['email']);
-            mysqli_stmt_execute($stmt);
-
             // Update tutor table: status = Aktif
             $updateTutorQuery = "UPDATE tutor SET status = 'Aktif' WHERE id = ?";
             $stmt = mysqli_prepare($conn, $updateTutorQuery);
@@ -70,14 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = "Tutor berhasil diaktifkan";
 
         } else if ($action === 'reject') {
-            // Update users table: status = banned
-            $updateUserQuery = "UPDATE users SET status = 'banned' WHERE email = ? AND role = 'tutor'";
-            $stmt = mysqli_prepare($conn, $updateUserQuery);
-            mysqli_stmt_bind_param($stmt, "s", $tutor['email']);
-            mysqli_stmt_execute($stmt);
-
-            // Keep tutor status as Non-Aktif or update to specific rejected status
-            $updateTutorQuery = "UPDATE tutor SET status = 'Non-Aktif' WHERE id = ?";
+            // Update tutor table: status = Cuti (sebagai penanda ditolak)
+            $updateTutorQuery = "UPDATE tutor SET status = 'Cuti' WHERE id = ?";
             $stmt = mysqli_prepare($conn, $updateTutorQuery);
             mysqli_stmt_bind_param($stmt, "i", $tutorId);
             mysqli_stmt_execute($stmt);

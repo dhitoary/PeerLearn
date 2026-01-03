@@ -296,7 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <nav class="sb-navbar">
     <div class="sb-nav-container">
         <div class="sb-brand">
-            <img src="/kelompok/kelompok_21/src/assets/img/logo.png" alt="PeerLearn Logo" class="logo">
+            <img src="../../../assets/img/logo.png" alt="PeerLearn Logo" class="logo">
             <span>PeerLearn</span>
         </div>
 

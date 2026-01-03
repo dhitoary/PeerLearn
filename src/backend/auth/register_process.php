@@ -34,18 +34,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Hash password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-    
-    // Set status: tutor = pending (perlu verifikasi), learner = active
-    $status = ($role == 'tutor') ? 'pending' : 'active';
 
     // Begin transaction
     mysqli_begin_transaction($conn);
 
     try {
-        // Insert ke tabel users
-        $user_query = "INSERT INTO users (name, email, password, role, status) VALUES (?, ?, ?, ?, ?)";
+        // Insert ke tabel users (tanpa kolom status karena tidak ada di tabel users)
+        $user_query = "INSERT INTO users (nama_lengkap, email, password, role) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($conn, $user_query);
-        mysqli_stmt_bind_param($stmt, "sssss", $name, $email, $hashed_password, $role, $status);
+        mysqli_stmt_bind_param($stmt, "ssss", $name, $email, $hashed_password, $role);
         
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Gagal insert ke tabel users");

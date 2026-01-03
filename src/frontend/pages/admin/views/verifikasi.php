@@ -1,25 +1,28 @@
 <?php
 global $conn;
 
+// Query untuk tutor yang belum diverifikasi (status Non-Aktif dan baru dibuat)
 $pendingQuery = "SELECT t.*, t.status as user_status, u.created_at as register_date, u.nama_lengkap as user_name
                  FROM users u
                  INNER JOIN tutor t ON u.email = t.email
                  WHERE u.role = 'tutor' 
-                 AND t.status = 'Pending'
+                 AND t.status = 'Non-Aktif'
+                 AND TIMESTAMPDIFF(DAY, u.created_at, NOW()) <= 30
                  ORDER BY u.created_at DESC";
 $pendingResult = mysqli_query($conn, $pendingQuery);
 $totalPending = mysqli_num_rows($pendingResult);
 
+// Query untuk riwayat verifikasi (tutor yang sudah aktif atau ditolak lama)
 $historyQuery = "SELECT t.*, t.status as user_status, u.created_at as register_date, u.nama_lengkap as user_name,
                  CASE 
                      WHEN t.status = 'Aktif' THEN 'approved'
-                     WHEN t.status = 'Non-Aktif' THEN 'rejected'
-                     ELSE 'unknown'
+                     WHEN t.status = 'Cuti' THEN 'rejected'
+                     ELSE 'pending'
                  END as decision_status
                  FROM users u
                  INNER JOIN tutor t ON u.email = t.email
                  WHERE u.role = 'tutor'
-                 AND t.status IN ('Aktif', 'Non-Aktif')
+                 AND (t.status = 'Aktif' OR (t.status = 'Cuti'))
                  ORDER BY u.created_at DESC
                  LIMIT 20";
 $historyResult = mysqli_query($conn, $historyQuery);

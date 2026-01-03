@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($email) || empty($password)) {
         $error = "Email dan password harus diisi.";
     } else {
-        $query = "SELECT id, nama_lengkap, email, password, role, status FROM users WHERE email = ?";
+        $query = "SELECT id, nama_lengkap, email, password, role FROM users WHERE email = ?";
         $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param($stmt, "s", $email);
         mysqli_stmt_execute($stmt);
@@ -52,24 +52,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if (password_verify($password, $user['password'])) {
                 
-                if ($user['status'] === 'banned') {
-                    $error = "Akun Anda telah dinonaktifkan. Hubungi admin untuk informasi lebih lanjut.";
-                } else if ($user['status'] === 'pending' && $user['role'] === 'tutor') {
-                    $error = "Akun tutor Anda masih menunggu verifikasi dari admin.";
+                // Cek status khusus untuk tutor
+                if ($user['role'] === 'tutor') {
+                    $tutorQuery = "SELECT status FROM tutor WHERE email = ?";
+                    $stmtTutor = mysqli_prepare($conn, $tutorQuery);
+                    mysqli_stmt_bind_param($stmtTutor, "s", $email);
+                    mysqli_stmt_execute($stmtTutor);
+                    $tutorResult = mysqli_stmt_get_result($stmtTutor);
+                    
+                    if ($tutorResult && mysqli_num_rows($tutorResult) > 0) {
+                        $tutor = mysqli_fetch_assoc($tutorResult);
+                        if ($tutor['status'] === 'Pending' || $tutor['status'] === 'Non-Aktif') {
+                            $error = "Akun tutor Anda masih menunggu verifikasi dari admin.";
+                        } else {
+                            // Tutor sudah diverifikasi
+                            $_SESSION['is_logged_in'] = true;
+                            $_SESSION['user_id'] = $user['id'];
+                            $_SESSION['user_name'] = $user['nama_lengkap'];
+                            $_SESSION['user_email'] = $user['email'];
+                            $_SESSION['user_role'] = $user['role'];
+
+                            header("Location: ../public/landing_page.php");
+                            exit;
+                        }
+                    } else {
+                        $error = "Data tutor tidak ditemukan.";
+                    }
                 } else {
+                    // Role lainnya (admin, learner) langsung login
                     $_SESSION['is_logged_in'] = true;
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['user_name'] = $user['nama_lengkap'];
                     $_SESSION['user_email'] = $user['email'];
                     $_SESSION['user_role'] = $user['role'];
-                    $_SESSION['user_status'] = $user['status'];
 
                     if ($user['role'] === 'admin') {
                         header("Location: ../admin/dashboard.php");
                     } else if ($user['role'] === 'learner') {
                         header("Location: ../learner/dashboard_siswa.php");
-                    } else if ($user['role'] === 'tutor') {
-                        header("Location: ../public/landing_page.php");
                     } else {
                         header("Location: ../public/landing_page.php");
                     }
