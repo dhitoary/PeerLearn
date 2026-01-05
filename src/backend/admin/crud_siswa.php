@@ -29,13 +29,13 @@ switch ($action) {
 }
 
 function createSiswa($conn) {
-    $nama = mysqli_real_escape_string($conn, $_POST['nama_lengkap']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $jenjang = mysqli_real_escape_string($conn, $_POST['jenjang']);
-    $sekolah = mysqli_real_escape_string($conn, $_POST['sekolah']);
-    $kelas = mysqli_real_escape_string($conn, $_POST['kelas']);
-    $minat = mysqli_real_escape_string($conn, $_POST['minat']);
-    $status = mysqli_real_escape_string($conn, $_POST['status'] ?? 'Aktif');
+    $nama = $_POST['nama_lengkap'];
+    $email = $_POST['email'];
+    $jenjang = $_POST['jenjang'];
+    $sekolah = $_POST['sekolah'];
+    $kelas = $_POST['kelas'];
+    $minat = $_POST['minat'];
+    $status = $_POST['status'] ?? 'Aktif';
     
     // Validasi email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -43,33 +43,44 @@ function createSiswa($conn) {
         return;
     }
     
-    // Cek apakah email sudah ada
-    $checkEmail = "SELECT id FROM siswa WHERE email = '$email'";
-    $result = mysqli_query($conn, $checkEmail);
+    // Cek apakah email sudah ada menggunakan prepared statement
+    $checkEmail = "SELECT id FROM siswa WHERE email = ?";
+    $stmt = mysqli_prepare($conn, $checkEmail);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
     if (mysqli_num_rows($result) > 0) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => false, 'message' => 'Email sudah terdaftar']);
         return;
     }
+    mysqli_stmt_close($stmt);
     
+    // Insert dengan prepared statement
     $query = "INSERT INTO siswa (nama_lengkap, email, jenjang, sekolah, kelas, minat, status, created_at) 
-              VALUES ('$nama', '$email', '$jenjang', '$sekolah', '$kelas', '$minat', '$status', NOW())";
+              VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "sssssss", $nama, $email, $jenjang, $sekolah, $kelas, $minat, $status);
     
-    if (mysqli_query($conn, $query)) {
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => true, 'message' => 'Siswa berhasil ditambahkan']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Gagal menambahkan siswa: ' . mysqli_error($conn)]);
+        mysqli_stmt_close($stmt);
+        echo json_encode(['success' => false, 'message' => 'Gagal menambahkan siswa!']);
     }
 }
 
 function updateSiswa($conn) {
     $id = intval($_POST['id']);
-    $nama = mysqli_real_escape_string($conn, $_POST['nama_lengkap']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $jenjang = mysqli_real_escape_string($conn, $_POST['jenjang']);
-    $sekolah = mysqli_real_escape_string($conn, $_POST['sekolah']);
-    $kelas = mysqli_real_escape_string($conn, $_POST['kelas']);
-    $minat = mysqli_real_escape_string($conn, $_POST['minat']);
-    $status = mysqli_real_escape_string($conn, $_POST['status']);
+    $nama = $_POST['nama_lengkap'];
+    $email = $_POST['email'];
+    $jenjang = $_POST['jenjang'];
+    $sekolah = $_POST['sekolah'];
+    $kelas = $_POST['kelas'];
+    $minat = $_POST['minat'];
+    $status = $_POST['status'];
     
     // Validasi email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -78,26 +89,37 @@ function updateSiswa($conn) {
     }
     
     // Cek apakah email sudah digunakan oleh siswa lain
-    $checkEmail = "SELECT id FROM siswa WHERE email = '$email' AND id != $id";
-    $result = mysqli_query($conn, $checkEmail);
+    $checkEmail = "SELECT id FROM siswa WHERE email = ? AND id != ?";
+    $stmt = mysqli_prepare($conn, $checkEmail);
+    mysqli_stmt_bind_param($stmt, "si", $email, $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
     if (mysqli_num_rows($result) > 0) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => false, 'message' => 'Email sudah digunakan oleh siswa lain']);
         return;
     }
+    mysqli_stmt_close($stmt);
     
     $query = "UPDATE siswa SET 
-              nama_lengkap = '$nama',
-              email = '$email',
-              jenjang = '$jenjang',
-              sekolah = '$sekolah',
-              kelas = '$kelas',
-              minat = '$minat',
-              status = '$status'
-              WHERE id = $id";
+              nama_lengkap = ?,
+              email = ?,
+              jenjang = ?,
+              sekolah = ?,
+              kelas = ?,
+              minat = ?,
+              status = ?
+              WHERE id = ?";
     
-    if (mysqli_query($conn, $query)) {
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "sssssssi", $nama, $email, $jenjang, $sekolah, $kelas, $minat, $status, $id);
+    
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => true, 'message' => 'Data siswa berhasil diupdate']);
     } else {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => false, 'message' => 'Gagal mengupdate siswa: ' . mysqli_error($conn)]);
     }
 }
@@ -111,21 +133,29 @@ function deleteSiswa($conn) {
     }
     
     // Cek apakah siswa memiliki booking aktif
-    $checkBooking = "SELECT COUNT(*) as total FROM bookings WHERE learner_id = $id AND status IN ('pending', 'confirmed')";
-    $result = mysqli_query($conn, $checkBooking);
+    $checkBooking = "SELECT COUNT(*) as total FROM bookings WHERE learner_id = ? AND status IN ('pending', 'confirmed')";
+    $stmt = mysqli_prepare($conn, $checkBooking);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
     
     if ($row['total'] > 0) {
         echo json_encode(['success' => false, 'message' => 'Tidak dapat menghapus siswa yang memiliki booking aktif']);
         return;
     }
     
-    $query = "DELETE FROM siswa WHERE id = $id";
+    $query = "DELETE FROM siswa WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $id);
     
-    if (mysqli_query($conn, $query)) {
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => true, 'message' => 'Siswa berhasil dihapus']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Gagal menghapus siswa: ' . mysqli_error($conn)]);
+        mysqli_stmt_close($stmt);
+        echo json_encode(['success' => false, 'message' => 'Gagal menghapus siswa!']);
     }
 }
 
@@ -137,12 +167,17 @@ function readSiswa($conn) {
         return;
     }
     
-    $query = "SELECT * FROM siswa WHERE id = $id";
-    $result = mysqli_query($conn, $query);
+    $query = "SELECT * FROM siswa WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     
     if ($row = mysqli_fetch_assoc($result)) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => true, 'data' => $row]);
     } else {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => false, 'message' => 'Data tidak ditemukan']);
     }
 }

@@ -29,11 +29,11 @@ switch ($action) {
 }
 
 function createTutor($conn) {
-    $nama = mysqli_real_escape_string($conn, $_POST['nama_lengkap']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $keahlian = mysqli_real_escape_string($conn, $_POST['keahlian']);
-    $pendidikan = mysqli_real_escape_string($conn, $_POST['pendidikan']);
-    $status = mysqli_real_escape_string($conn, $_POST['status'] ?? 'Aktif');
+    $nama = $_POST['nama_lengkap'];
+    $email = $_POST['email'];
+    $keahlian = $_POST['keahlian'];
+    $pendidikan = $_POST['pendidikan'];
+    $status = $_POST['status'] ?? 'Aktif';
     
     // Validasi email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -41,31 +41,42 @@ function createTutor($conn) {
         return;
     }
     
-    // Cek apakah email sudah ada
-    $checkEmail = "SELECT id FROM tutor WHERE email = '$email'";
-    $result = mysqli_query($conn, $checkEmail);
+    // Cek apakah email sudah ada menggunakan prepared statement
+    $checkEmail = "SELECT id FROM tutor WHERE email = ?";
+    $stmt = mysqli_prepare($conn, $checkEmail);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
     if (mysqli_num_rows($result) > 0) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => false, 'message' => 'Email sudah terdaftar']);
         return;
     }
+    mysqli_stmt_close($stmt);
     
+    // Insert dengan prepared statement
     $query = "INSERT INTO tutor (nama_lengkap, email, keahlian, pendidikan, status, created_at) 
-              VALUES ('$nama', '$email', '$keahlian', '$pendidikan', '$status', NOW())";
+              VALUES (?, ?, ?, ?, ?, NOW())";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "sssss", $nama, $email, $keahlian, $pendidikan, $status);
     
-    if (mysqli_query($conn, $query)) {
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => true, 'message' => 'Tutor berhasil ditambahkan']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Gagal menambahkan tutor: ' . mysqli_error($conn)]);
+        mysqli_stmt_close($stmt);
+        echo json_encode(['success' => false, 'message' => 'Gagal menambahkan tutor!']);
     }
 }
 
 function updateTutor($conn) {
     $id = intval($_POST['id']);
-    $nama = mysqli_real_escape_string($conn, $_POST['nama_lengkap']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $keahlian = mysqli_real_escape_string($conn, $_POST['keahlian']);
-    $pendidikan = mysqli_real_escape_string($conn, $_POST['pendidikan']);
-    $status = mysqli_real_escape_string($conn, $_POST['status']);
+    $nama = $_POST['nama_lengkap'];
+    $email = $_POST['email'];
+    $keahlian = $_POST['keahlian'];
+    $pendidikan = $_POST['pendidikan'];
+    $status = $_POST['status'];
     
     // Validasi email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -74,25 +85,36 @@ function updateTutor($conn) {
     }
     
     // Cek apakah email sudah digunakan oleh tutor lain
-    $checkEmail = "SELECT id FROM tutor WHERE email = '$email' AND id != $id";
-    $result = mysqli_query($conn, $checkEmail);
+    $checkEmail = "SELECT id FROM tutor WHERE email = ? AND id != ?";
+    $stmt = mysqli_prepare($conn, $checkEmail);
+    mysqli_stmt_bind_param($stmt, "si", $email, $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
     if (mysqli_num_rows($result) > 0) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => false, 'message' => 'Email sudah digunakan oleh tutor lain']);
         return;
     }
+    mysqli_stmt_close($stmt);
     
     $query = "UPDATE tutor SET 
-              nama_lengkap = '$nama',
-              email = '$email',
-              keahlian = '$keahlian',
-              pendidikan = '$pendidikan',
-              status = '$status'
-              WHERE id = $id";
+              nama_lengkap = ?,
+              email = ?,
+              keahlian = ?,
+              pendidikan = ?,
+              status = ?
+              WHERE id = ?";
     
-    if (mysqli_query($conn, $query)) {
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "sssssi", $nama, $email, $keahlian, $pendidikan, $status, $id);
+    
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => true, 'message' => 'Data tutor berhasil diupdate']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Gagal mengupdate tutor: ' . mysqli_error($conn)]);
+        mysqli_stmt_close($stmt);
+        echo json_encode(['success' => false, 'message' => 'Gagal mengupdate tutor!']);
     }
 }
 
@@ -105,21 +127,29 @@ function deleteTutor($conn) {
     }
     
     // Cek apakah tutor memiliki kelas aktif
-    $checkBooking = "SELECT COUNT(*) as total FROM bookings WHERE tutor_id = $id AND status IN ('pending', 'confirmed')";
-    $result = mysqli_query($conn, $checkBooking);
+    $checkBooking = "SELECT COUNT(*) as total FROM bookings WHERE tutor_id = ? AND status IN ('pending', 'confirmed')";
+    $stmt = mysqli_prepare($conn, $checkBooking);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
     
     if ($row['total'] > 0) {
         echo json_encode(['success' => false, 'message' => 'Tidak dapat menghapus tutor yang memiliki kelas aktif']);
         return;
     }
     
-    $query = "DELETE FROM tutor WHERE id = $id";
+    $query = "DELETE FROM tutor WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $id);
     
-    if (mysqli_query($conn, $query)) {
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => true, 'message' => 'Tutor berhasil dihapus']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Gagal menghapus tutor: ' . mysqli_error($conn)]);
+        mysqli_stmt_close($stmt);
+        echo json_encode(['success' => false, 'message' => 'Gagal menghapus tutor!']);
     }
 }
 
@@ -131,12 +161,17 @@ function readTutor($conn) {
         return;
     }
     
-    $query = "SELECT * FROM tutor WHERE id = $id";
-    $result = mysqli_query($conn, $query);
+    $query = "SELECT * FROM tutor WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     
     if ($row = mysqli_fetch_assoc($result)) {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => true, 'data' => $row]);
     } else {
+        mysqli_stmt_close($stmt);
         echo json_encode(['success' => false, 'message' => 'Data tidak ditemukan']);
     }
 }
