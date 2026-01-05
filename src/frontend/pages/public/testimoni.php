@@ -2,117 +2,101 @@
 $assetPath = "../../assets/";
 include '../../layouts/header.php';
 
-// Dummy data testimoni - karena tidak ada di database
-$testimoniData = [
-    [
-        'nama' => 'Alya Natasya',
-        'inisial' => 'AN',
-        'jenjang' => 'Siswa SMA Kelas 12',
-        'mapel' => 'Matematika',
-        'rating' => 5,
-        'testimoni' => 'Tutor Matematika yang mengajar saya sangat sabar dan detail dalam menjelaskan. Nilai saya meningkat drastis dari 70 menjadi 95! Terima kasih PeerLearn.',
-        'gradient' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    ],
-    [
-        'nama' => 'Rizki Pratama',
-        'inisial' => 'RP',
-        'jenjang' => 'Alumni SMA - Mahasiswa ITB',
-        'mapel' => 'Persiapan UTBK',
-        'rating' => 5,
-        'testimoni' => 'Persiapan UTBK jadi lebih terarah dengan tutor dari PeerLearn. Metode belajarnya efektif dan jadwal fleksibel. Akhirnya lolos PTN impian!',
-        'gradient' => 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
-    ],
-    [
-        'nama' => 'Dinda Maharani',
-        'inisial' => 'DM',
-        'jenjang' => 'Siswa SMP Kelas 9',
-        'mapel' => 'Bahasa Inggris SMP',
-        'rating' => 4.5,
-        'testimoni' => 'Belajar Bahasa Inggris jadi lebih fun dan nggak membosankan. Tutor bisa bikin suasana nyaman dan materi mudah dipahami. Rekomendasi banget!',
-        'gradient' => 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-    ],
-    [
-        'nama' => 'Farhan Aditya',
-        'inisial' => 'FA',
-        'jenjang' => 'Siswa SMA Kelas 11',
-        'mapel' => 'Fisika',
-        'rating' => 5,
-        'testimoni' => 'Fisika yang tadinya susah banget sekarang jadi lebih mudah dipahami. Tutor ngejelasin dengan contoh kehidupan sehari-hari jadi lebih relate.',
-        'gradient' => 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
-    ],
-    [
-        'nama' => 'Siti Khadijah',
-        'inisial' => 'SK',
-        'jenjang' => 'Siswa SMP Kelas 8',
-        'mapel' => 'Matematika SMP',
-        'rating' => 5,
-        'testimoni' => 'Les privat terbaik yang pernah saya ikuti! Harganya terjangkau untuk pelajar, tutornya ramah, dan sistem bookingnya mudah banget.',
-        'gradient' => 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'
-    ],
-    [
-        'nama' => 'Budi Anwar',
-        'inisial' => 'BA',
-        'jenjang' => 'Siswa SMA Kelas 12',
-        'mapel' => 'Kimia',
-        'rating' => 4.5,
-        'testimoni' => 'Tutor Kimia yang mengajar sangat kompeten dan berpengalaman. Konsep yang rumit dijelaskan dengan sederhana. Sangat membantu untuk persiapan ujian.',
-        'gradient' => 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'
-    ],
-    [
-        'nama' => 'Ahmad Fauzi',
-        'inisial' => 'AF',
-        'jenjang' => 'Siswa SD Kelas 6',
-        'mapel' => 'Matematika SD',
-        'rating' => 5,
-        'testimoni' => 'Anak saya yang tadinya takut matematika sekarang jadi suka! Tutor sangat sabar menghadapi anak dan cara mengajarnya menyenangkan.',
-        'gradient' => 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)'
-    ],
-    [
-        'nama' => 'Putri Ayu',
-        'inisial' => 'PA',
-        'jenjang' => 'Siswa SMA Kelas 10',
-        'mapel' => 'Biologi SMA',
-        'rating' => 5,
-        'testimoni' => 'Materi Biologi yang kompleks jadi lebih mudah dengan visualisasi dan penjelasan yang detail dari tutor. Sangat recommended!',
-        'gradient' => 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-    ],
-    [
-        'nama' => 'Reza Firmansyah',
-        'inisial' => 'RF',
-        'jenjang' => 'Siswa SMP Kelas 7',
-        'mapel' => 'IPA SMP',
-        'rating' => 4.5,
-        'testimoni' => 'Pertama kali ikut les privat online, ternyata seru! Tutor asik dan materi IPA jadi lebih gampang dipahami. Next mau booking lagi.',
-        'gradient' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    ],
-    [
-        'nama' => 'Laila Sari',
-        'inisial' => 'LS',
-        'jenjang' => 'Siswa SMA Kelas 12',
-        'mapel' => 'Ekonomi SMA',
-        'rating' => 5,
-        'testimoni' => 'Tutor Ekonomi sangat menguasai materi dan bisa menjelaskan konsep yang abstrak dengan contoh nyata. Nilai ujian saya meningkat signifikan!',
-        'gradient' => 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
-    ],
-    [
-        'nama' => 'Andi Wijaya',
-        'inisial' => 'AW',
-        'jenjang' => 'Siswa SMP Kelas 9',
-        'mapel' => 'Bahasa Indonesia SMP',
-        'rating' => 4.5,
-        'testimoni' => 'Persiapan ujian nasional jadi lebih matang dengan bimbingan tutor Bahasa Indonesia. Materinya lengkap dan latihan soalnya banyak.',
-        'gradient' => 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-    ],
-    [
-        'nama' => 'Nova Andriani',
-        'inisial' => 'NA',
-        'jenjang' => 'Siswa SMA Kelas 11',
-        'mapel' => 'Geografi SMA',
-        'rating' => 5,
-        'testimoni' => 'Belajar Geografi jadi lebih menarik dengan metode pengajaran yang interaktif. Tutor juga sering kasih tips buat hafalan yang efektif.',
-        'gradient' => 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
-    ]
+// Koneksi database
+require_once '../../../config/database.php';
+
+// Get testimoni dari database dengan prepared statement
+$query = "SELECT r.*, s.nama_lengkap as siswa_nama, s.jenjang, s.kelas, 
+          t.nama_lengkap as tutor_nama, sub.subject_name
+          FROM reviews r
+          JOIN siswa s ON r.learner_id = s.id
+          JOIN tutor t ON r.tutor_id = t.id
+          JOIN bookings b ON r.booking_id = b.id
+          JOIN subjects sub ON b.subject_id = sub.id
+          WHERE r.rating >= 4
+          ORDER BY r.created_at DESC
+          LIMIT 50";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+$testimoniData = [];
+$gradients = [
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+    'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
+    'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
 ];
+
+$counter = 0;
+while($row = mysqli_fetch_assoc($result)) {
+    $inisial = strtoupper(substr($row['siswa_nama'], 0, 1));
+    if (strpos($row['siswa_nama'], ' ') !== false) {
+        $namaParts = explode(' ', $row['siswa_nama']);
+        $inisial = strtoupper(substr($namaParts[0], 0, 1) . substr($namaParts[1], 0, 1));
+    }
+    
+    $jenjangInfo = $row['jenjang'];
+    if ($row['kelas']) {
+        $jenjangInfo .= ' Kelas ' . $row['kelas'];
+    }
+    
+    $testimoniData[] = [
+        'nama' => $row['siswa_nama'],
+        'inisial' => $inisial,
+        'jenjang' => $jenjangInfo,
+        'mapel' => $row['subject_name'],
+        'rating' => $row['rating'],
+        'testimoni' => $row['review_text'],
+        'gradient' => $gradients[$counter % count($gradients)]
+    ];
+    $counter++;
+}
+
+mysqli_stmt_close($stmt);
+
+// Jika tidak ada testimoni dari database, gunakan dummy data
+if (empty($testimoniData)) {
+    $testimoniData = [
+        [
+            'nama' => 'Alya Natasya',
+            'inisial' => 'AN',
+            'jenjang' => 'Siswa SMA Kelas 12',
+            'mapel' => 'Matematika',
+            'rating' => 5,
+            'testimoni' => 'Tutor Matematika yang mengajar saya sangat sabar dan detail dalam menjelaskan. Nilai saya meningkat drastis dari 70 menjadi 95! Terima kasih PeerLearn.',
+            'gradient' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        ],
+        [
+            'nama' => 'Rizki Pratama',
+            'inisial' => 'RP',
+            'jenjang' => 'Alumni SMA - Mahasiswa ITB',
+            'mapel' => 'Persiapan UTBK',
+            'rating' => 5,
+            'testimoni' => 'Persiapan UTBK jadi lebih terarah dengan tutor dari PeerLearn. Metode belajarnya efektif dan jadwal fleksibel. Akhirnya lolos PTN impian!',
+            'gradient' => 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+        ],
+        [
+            'nama' => 'Dinda Maharani',
+            'inisial' => 'DM',
+            'jenjang' => 'Siswa SMP Kelas 9',
+            'mapel' => 'Bahasa Inggris SMP',
+            'rating' => 4.5,
+            'testimoni' => 'Belajar Bahasa Inggris jadi lebih fun dan nggak membosankan. Tutor bisa bikin suasana nyaman dan materi mudah dipahami. Rekomendasi banget!',
+            'gradient' => 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+        ]
+    ];
+}
+
+// Hitung statistik
+$totalTestimoni = count($testimoniData);
+$totalRating = array_sum(array_column($testimoniData, 'rating'));
+$avgRating = $totalTestimoni > 0 ? number_format($totalRating / $totalTestimoni, 1) : 5.0;
+$satisfactionRate = 98; // Persentase kepuasan
 
 // Kategori untuk filter
 $categories = ['Semua', 'SD', 'SMP', 'SMA', 'UTBK'];
@@ -296,15 +280,15 @@ $categories = ['Semua', 'SD', 'SMP', 'SMA', 'UTBK'];
     <!-- Stats Bar -->
     <div class="stats-bar">
         <div class="stat-item">
-            <div class="stat-number"><?php echo count($testimoniData); ?>+</div>
+            <div class="stat-number"><?php echo $totalTestimoni; ?>+</div>
             <div class="stat-label">Testimoni Positif</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">4.9</div>
+            <div class="stat-number"><?php echo $avgRating; ?></div>
             <div class="stat-label">Rating Rata-rata</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">98%</div>
+            <div class="stat-number"><?php echo $satisfactionRate; ?>%</div>
             <div class="stat-label">Tingkat Kepuasan</div>
         </div>
         <div class="stat-item">
